@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Розшук - Публічна сторінка</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; background: #f4f4f4; }
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        .rozshuk-item { display: flex; align-items: center; background: #eee; padding: 10px; border-radius: 5px; margin-top: 10px; }
+        img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+        .info { flex: 1; text-align: left; margin-left: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🕵️‍♂️ Список розшукуваних</h2>
+        <div id="rozshukList"></div>
+    </div>
+
+    <script>
+        function renderRozshuk() {
+            const rozshukList = JSON.parse(localStorage.getItem("rozshuk")) || [];
+            const listDiv = document.getElementById("rozshukList");
+            listDiv.innerHTML = "";
+
+            rozshukList.forEach(person => {
+                const personDiv = document.createElement("div");
+                personDiv.className = "rozshuk-item";
+                personDiv.innerHTML = `
+                    <img src="${person.photo}" alt="Фото">
+                    <div class="info">
+                        <strong>${person.name}</strong><br>
+                        Стаття: ${person.article}<br>
+                        <a href="${person.proofLink}" target="_blank">Доказ</a>
+                    </div>
+                `;
+                listDiv.appendChild(personDiv);
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", renderRozshuk);
+    </script>
+
+</body>
+</html>
