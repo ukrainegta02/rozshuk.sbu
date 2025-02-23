@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Керування Розшуком</title>
+  <style>
+    body {
+      background-color: #1A1E30;
+      color: #F1F1F1;
+      font-family: Arial, sans-serif;
+    }
+    h3 {
+      color: #F2B500;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border: 1px solid #333;
+      color: #F1F1F1;
+    }
+    th {
+      background-color: #0A1424;
+    }
+    tr:nth-child(even) {
+      background-color: #1A1E30;
+    }
+    tr:nth-child(odd) {
+      background-color: #2A3A54;
+    }
+    button {
+      background-color: #F2B500;
+      color: black;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #D8A100;
+    }
+    input, select {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #333;
+      background-color: #2A3A54;
+      color: #F1F1F1;
+    }
+
+  
+    nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    }
+
+nav a {
+    text-decoration: none;
+    margin: 0 20px;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 12px 25px;
+    border-radius: 12px;
+    background-color: #000000;
+    transition: transform 0.2s ease-in-out, background 0.3s ease, box-shadow 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #fcd116;
+    color: #001a33;
+    transform: scale(1.15);
+    box-shadow: 0px 0px 15px #fcd116;
+}
+
+  </style>
+</head>
+<nav>
+  <a href="index.html">Назад</a>
+
+</nav>
+<body>
+
+  <h3>Подати Розшук</h3>
+  <form id="addPersonForm">
+    <input type="text" id="name" placeholder="Ім'я та Прізвище" required>
+    <input type="text" id="id" placeholder="ID" required>
+    <input type="text" id="article" placeholder="Стаття" required>
+    <select id="status" required>
+      <option value="Розшукується">Розшукується</option>
+      <option value="Затриманий">Затриманий</option>
+    </select>
+    <button type="submit">Додати</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ім'я та Прізвище</th>
+        <th>ID</th>
+        <th>Стаття</th>
+        <th>Статус</th>
+        <th>Дії</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    // Завантажити дані з localStorage
+    function loadData() {
+      const storedData = localStorage.getItem('wantedPersons');
+      const data = storedData ? JSON.parse(storedData) : [];
+      
+      const tableBody = document.getElementById('tableBody');
+      tableBody.innerHTML = ''; // Очистити таблицю
+
+      data.forEach((person) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${person.name}</td>
+          <td>${person.id}</td>
+          <td>${person.article}</td>
+          <td>${person.status}</td>
+          <td>
+            <button onclick="editPerson('${person.id}')">Редагувати</button>
+            <button onclick="deletePerson('${person.id}')">Видалити</button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+  
+    // Додати нову особу до списку
+    document.getElementById('addPersonForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+  
+      const name = document.getElementById('name').value;
+      const id = document.getElementById('id').value;
+      const article = document.getElementById('article').value;
+      const status = document.getElementById('status').value;
+  
+      // Збереження даних у localStorage
+      const storedData = localStorage.getItem('wantedPersons');
+      const data = storedData ? JSON.parse(storedData) : [];
+
+      // Перевірка на дублікати
+      const duplicate = data.find(person => person.id === id);
+      if (duplicate) {
+        alert("Особу з таким ID вже додано!");
+        return;
+      }
+
+      data.push({ id, name, article, status });
+      localStorage.setItem('wantedPersons', JSON.stringify(data));
+  
+      loadData(); // Завантажити та оновити таблицю після додавання
+      document.getElementById('addPersonForm').reset(); // Очистити форму
+    });
+  
+    // Редагування статусу особи
+    function editPerson(id) {
+      const newStatus = prompt('Введіть новий статус (Розшукується/Затриманий):');
+      if (!newStatus || (newStatus !== "Розшукується" && newStatus !== "Затриманий")) {
+        alert('Статус повинен бути або "Розшукується", або "Затриманий".');
+        return;
+      }
+
+      const storedData = localStorage.getItem('wantedPersons');
+      const data = storedData ? JSON.parse(storedData) : [];
+
+      const person = data.find(person => person.id === id);
+      if (person) {
+        person.status = newStatus;
+        localStorage.setItem('wantedPersons', JSON.stringify(data));
+        loadData(); // Оновити таблицю після редагування
+      }
+    }
+  
+    // Видалення особи
+    function deletePerson(id) {
+      const storedData = localStorage.getItem('wantedPersons');
+      const data = storedData ? JSON.parse(storedData) : [];
+  
+      const filteredData = data.filter(person => person.id !== id);
+      localStorage.setItem('wantedPersons', JSON.stringify(filteredData));
+      loadData(); // Оновити таблицю після видалення
+    }
+  
+    // Завантажити таблицю при завантаженні сторінки
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+  
+</body>
+</html>
