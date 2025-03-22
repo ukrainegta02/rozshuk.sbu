@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управління СБУ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .tablet {
+            width: 90%;
+            max-width: 800px;
+            height: 90vh;
+            max-height: 600px;
+            background: #1a1a1a;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #00b0ff;
+        }
+
+        .camera {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border-radius: 50%;
+            border: 2px solid #00b0ff;
+            z-index: 3;
+        }
+
+        .fingerprint-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            transition: opacity 0.5s ease;
+        }
+
+        .fingerprint-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fingerprint-screen img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        .fingerprint-screen h1 {
+            font-size: 1.5em;
+            color: #e0e0e0;
+            text-align: center;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        .fingerprint {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #00b0ff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .fingerprint:hover {
+            transform: scale(1.1);
+        }
+
+        .fingerprint::before {
+            content: "\f560";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 2em;
+            color: #00b0ff;
+        }
+
+        .control-panel {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            position: relative;
+        }
+
+        .control-panel.active {
+            opacity: 1;
+        }
+
+        .power-off {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 0, 0, 0.2);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 3;
+        }
+
+        .power-off:hover {
+            background: rgba(255, 0, 0, 0.5);
+        }
+
+        .power-off::before {
+            content: "\f011";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 1.2em;
+            color: #ff4444;
+        }
+
+        .sidebar {
+            width: 25%;
+            background: #0d1a26;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .logo {
+            width: 50px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            text-decoration: none;
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: #00b0ff;
+            color: #fff;
+        }
+
+        .sidebar a::before {
+            margin-right: 8px;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 1em;
+        }
+
+        .sidebar a:nth-child(2)::before { content: "\f234"; } /* Оголосити у Розшук */
+        .sidebar a:nth-child(3)::before { content: "\f002"; } /* Переглянути Розшук */
+        .sidebar a:nth-child(4)::before { content: "\f15c"; } /* Переглянути заяви */
+        .sidebar a:nth-child(5)::before { content: "\f2f1"; } /* Останні дії */
+        .sidebar a:nth-child(6)::before { content: "\f2f5"; } /* Вийти */
+
+        .content-area {
+            width: 75%;
+            padding: 20px;
+            background: #1c2526;
+            overflow-y: auto;
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .content h2 {
+            font-size: 1.5em;
+            color: #00b0ff;
+            margin-bottom: 20px;
+        }
+
+        .wanted-list, .application-list, .notification-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .wanted-list li, .application-list li, .notification-list li {
+            background: #0d1a26;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .wanted-list li::before, .application-list li::before, .notification-list li::before {
+            margin-right: 8px;
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 1em;
+        }
+
+        .wanted-list li::before { content: "\f6c0"; }
+        .application-list li::before { content: "\f15b"; }
+        .notification-list li.green::before { content: "\f234"; color: #00ff00; }
+        .notification-list li.red::before { content: "\f2f5"; color: #ff4444; }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #00b0ff;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            font-size: 0.9em;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background: #00b0ff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .btn:hover {
+            background: #0096db;
+        }
+
+        .btn::before {
+            content: "\f1d8";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-right: 5px;
+        }
+
+        /* Адаптивність для планшетів (768px) */
+        @media (max-width: 768px) {
+            .tablet {
+                width: 95%;
+                height: 85vh;
+            }
+
+            .fingerprint {
+                width: 50px;
+                height: 50px;
+            }
+
+            .fingerprint::before {
+                font-size: 1.5em;
+            }
+
+            .fingerprint-screen h1 {
+                font-size: 1.2em;
+            }
+
+            .sidebar {
+                padding: 15px;
+            }
+
+            .sidebar a {
+                font-size: 0.9em;
+                padding: 8px;
+            }
+
+            .content-area {
+                padding: 15px;
+            }
+
+            .content h2 {
+                font-size: 1.2em;
+            }
+
+            .power-off {
+                width: 35px;
+                height: 35px;
+            }
+        }
+
+        /* Адаптивність для телефонів (480px) */
+        @media (max-width: 480px) {
+            .tablet {
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+
+            .fingerprint {
+                width: 40px;
+                height: 40px;
+            }
+
+            .fingerprint::before {
+                font-size: 1.2em;
+            }
+
+            .fingerprint-screen h1 {
+                font-size: 1em;
+            }
+
+            .control-panel {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .sidebar a {
+                font-size: 0.8em;
+                padding: 8px;
+            }
+
+            .content-area {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .content h2 {
+                font-size: 1em;
+            }
+
+            .power-off {
+                width: 30px;
+                height: 30px;
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const fingerprintScreen = document.querySelector('.fingerprint-screen');
+            const controlPanel = document.querySelector('.control-panel');
+            const fingerprint = document.querySelector('.fingerprint');
+            const powerOff = document.querySelector('.power-off');
+            const menuLinks = document.querySelectorAll('.sidebar a');
+            const contents = document.querySelectorAll('.content');
+            const addWantedForm = document.getElementById('add-wanted-form');
+            const wantedList = document.getElementById('wanted-list');
+            const actionsList = document.getElementById('actions-list');
+
+            // Функція для завантаження списку розшуку
+            async function loadWantedList() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/wanted');
+                    const data = await response.json();
+                    wantedList.innerHTML = '';
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `${item.name} - ID: ${item.id}, Докази: <a href="${item.evidence}" target="_blank">${item.evidence}</a> (${item.date})`;
+                        wantedList.appendChild(li);
+                    });
+                } catch (err) {
+                    console.error('Помилка при завантаженні списку розшуку:', err);
+                }
+            }
+
+            // Функція для завантаження останніх дій
+            async function loadActionsList() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/actions');
+                    const data = await response.json();
+                    actionsList.innerHTML = '';
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.className = item.status;
+                        li.innerHTML = item.message;
+                        actionsList.appendChild(li);
+                    });
+                } catch (err) {
+                    console.error('Помилка при завантаженні останніх дій:', err);
+                }
+            }
+
+            // Початкове завантаження списків
+            loadWantedList();
+            loadActionsList();
+
+            fingerprint.addEventListener('click', () => {
+                fingerprintScreen.classList.add('hidden');
+                controlPanel.classList.add('active');
+                contents[0].classList.add('active');
+                menuLinks[0].classList.add('active');
+            });
+
+            powerOff.addEventListener('click', () => {
+                controlPanel.classList.remove('active');
+                fingerprintScreen.classList.remove('hidden');
+                contents.forEach(c => c.classList.remove('active'));
+                menuLinks.forEach(l => l.classList.remove('active'));
+            });
+
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const contentId = link.getAttribute('data-content');
+                    if (contentId === 'logout') {
+                        controlPanel.classList.remove('active');
+                        fingerprintScreen.classList.remove('hidden');
+                        contents.forEach(c => c.classList.remove('active'));
+                        menuLinks.forEach(l => l.classList.remove('active'));
+                    } else {
+                        menuLinks.forEach(l => l.classList.remove('active'));
+                        contents.forEach(c => c.classList.remove('active'));
+
+                        link.classList.add('active');
+                        document.getElementById(contentId).classList.add('active');
+                    }
+                });
+            });
+
+            addWantedForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('wanted-name').value;
+                const id = document.getElementById('wanted-id').value;
+                const evidence = document.getElementById('wanted-evidence').value;
+                const date = new Date().toLocaleDateString('uk-UA');
+
+                try {
+                    const response = await fetch('http://localhost:5000/api/wanted', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ name, id, evidence, date }),
+                    });
+
+                    if (response.ok) {
+                        loadWantedList();
+                        loadActionsList();
+                        addWantedForm.reset();
+                    } else {
+                        alert('Помилка при додаванні в розшук');
+                    }
+                } catch (err) {
+                    console.error('Помилка при відправці:', err);
+                    alert('Помилка при додаванні в розшук');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="tablet">
+        <div class="camera"></div>
+        <div class="fingerprint-screen">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="SBU Logo">
+            <h1>Служба безпеки України</h1>
+            <div class="fingerprint"></div>
+        </div>
+
+        <div class="control-panel">
+            <div class="power-off"></div>
+            <div class="sidebar">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="SBU Logo" class="logo">
+                <a href="#" data-content="add-wanted" class="menu-item">Оголосити у Розшук</a>
+                <a href="#" data-content="wanted" class="menu-item">Переглянути Розшук</a>
+                <a href="#" data-content="applications" class="menu-item">Переглянути заяви</a>
+                <a href="#" data-content="actions" class="menu-item">Останні дії</a>
+                <a href="#" data-content="logout" class="menu-item">Вийти</a>
+            </div>
+            <div class="content-area">
+                <div id="add-wanted" class="content">
+                    <h2>Оголосити у Розшук</h2>
+                    <form id="add-wanted-form">
+                        <div class="form-group">
+                            <label for="wanted-name">Ім'я та Прізвище:</label>
+                            <input type="text" id="wanted-name" required placeholder="Введіть ім'я та прізвище">
+                        </div>
+                        <div class="form-group">
+                            <label for="wanted-id">ID:</label>
+                            <input type="text" id="wanted-id" required placeholder="Введіть ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="wanted-evidence">Докази порушення (YouTube):</label>
+                            <input type="url" id="wanted-evidence" required placeholder="Введіть посилання на YouTube">
+                        </div>
+                        <button type="submit" class="btn">Оголосити</button>
+                    </form>
+                </div>
+                <div id="wanted" class="content">
+                    <h2>Переглянути Розшук</h2>
+                    <ul class="wanted-list" id="wanted-list">
+                        <!-- Список буде заповнюватися через JavaScript -->
+                    </ul>
+                </div>
+                <div id="applications" class="content">
+                    <h2>Переглянути заяви</h2>
+                    <ul class="application-list">
+                        <li>Заява #001 - Скарга на підозрілу діяльність (22.03.2025)</li>
+                        <li>Заява #002 - Повідомлення про зникнення (21.03.2025)</li>
+                        <li>Заява #003 - Запит на перевірку (20.03.2025)</li>
+                    </ul>
+                </div>
+                <div id="actions" class="content">
+                    <h2>Останні дії</h2>
+                    <ul class="notification-list" id="actions-list">
+                        <li class="red">Заява відхилена: #003 20.03.2025, 18:41:56</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
