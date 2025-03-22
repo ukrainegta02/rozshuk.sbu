@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мої заяви - СБУ м. Дніпро</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Стилі залишаються без змін */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(rgba(0, 0, 0, 0.603), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.cnscdn.com/c/f/7/a/cf7af9eaaf8d80f53544f265bd30d1de/600x315.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: #000000a4;
+            padding: 60px 0;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo {
+            max-width: 120px;
+            border-radius: 0%;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        h1.site-title {
+            font-size: 3em;
+            font-weight: 700;
+            color: #00b0ff;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 8px rgba(0, 176, 255, 0.5);
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(38, 38, 38, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #e0e0e0;
+            padding: 12px 25px;
+            margin: 0 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        nav a:hover {
+            background: linear-gradient(45deg, #00b0ff, #0096db);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(0, 176, 255, 0.4);
+        }
+
+        nav a i {
+            margin-right: 10px;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            background: rgba(26, 26, 26, 0.9);
+            border-radius: 15px;
+            max-width: 800px;
+            margin: 30px auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .search-form {
+            width: 100%;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .search-form h2 {
+            color: #00b0ff;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .search-form input {
+            padding: 10px;
+            width: 60%;
+            border: 1px solid #00b0ff;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .search-form button {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00b0ff, #0096db);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .search-form button:hover {
+            background: linear-gradient(45deg, #0096db, #007bb5);
+        }
+
+        .application-list {
+            width: 100%;
+            list-style: none;
+            padding: 0;
+        }
+
+        .application-item {
+            background: rgba(15, 22, 40, 0.95);
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .application-item p {
+            margin: 5px 0;
+            font-size: 1em;
+        }
+
+        .application-item p strong {
+            color: #00b0ff;
+        }
+
+        .application-item .status {
+            color: #00ff00;
+        }
+
+        .application-item .status.rejected {
+            color: #ff4444;
+        }
+
+        .application-item .status.pending {
+            color: #ffa500;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            header { padding: 40px 0; }
+            h1.site-title { font-size: 2em; }
+            nav { flex-direction: column; padding: 10px 0; }
+            nav a { margin: 8px 0; }
+            main { padding: 20px; }
+            .search-form input { width: 80%; }
+        }
+    </style>
+    <script type="module">
+        // Імпорт Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-firestore.js";
+
+        // Firebase конфігурація
+        const firebaseConfig = {
+            apiKey: "AIzaSyCnUIWXZqAMXVxLLNMIcp0ivb9qk-fzwL4",
+            authDomain: "rozhuk-4467c.firebaseapp.com",
+            projectId: "rozhuk-4467c",
+            storageBucket: "rozhuk-4467c.firebasestorage.app",
+            messagingSenderId: "516030103073",
+            appId: "1:516030103073:web:d1d858f0f8556215a22d60",
+            measurementId: "G-BJ4771CGFX"
+        };
+
+        // Ініціалізація Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchForm = document.getElementById('search-form');
+            const applicationList = document.getElementById('application-list');
+
+            // Отримання ID з URL (якщо є)
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('id');
+            if (userId) {
+                document.getElementById('search-id').value = userId;
+                loadApplications(userId);
+            }
+
+            searchForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('search-id').value;
+                loadApplications(id);
+            });
+
+            async function loadApplications(id) {
+                const q = query(collection(db, 'applications'), where('id', '==', id));
+                const querySnapshot = await getDocs(q);
+                const userApplications = [];
+                querySnapshot.forEach(doc => {
+                    userApplications.push(doc.data());
+                });
+
+                applicationList.innerHTML = '';
+                if (userApplications.length === 0) {
+                    applicationList.innerHTML = '<p>Заяв не знайдено.</p>';
+                    return;
+                }
+
+                userApplications.forEach(app => {
+                    const li = document.createElement('li');
+                    li.className = 'application-item';
+                    li.innerHTML = `
+                        <p><strong>Ім'я:</strong> ${app.name}</p>
+                        <p><strong>ID:</strong> ${app.id}</p>
+                        <p><strong>Текст заяви:</strong> ${app.text}</p>
+                        <p><strong>DATE:</strong> ${app.date}</p>
+                        <p><strong>Статус:</strong> <span class="status ${app.status === 'Схвалено' ? 'approved' : app.status === 'Відмовлено' ? 'rejected' : 'pending'}">${app.status}</span></p>
+                    `;
+                    applicationList.appendChild(li);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="Logo" class="logo">
+            <h1 class="site-title">Мої заяви - СБУ м. Дніпро</h1>
+            <nav>
+                <a href="submit-application.html"><i class="fas fa-file-alt"></i> Подати заяву</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="search-form">
+            <h2>Переглянути мої заяви</h2>
+            <form id="search-form">
+                <input type="text" id="search-id" placeholder="Введіть ваш ID" required>
+                <button type="submit">Пошук</button>
+            </form>
+        </div>
+        <ul class="application-list" id="application-list"></ul>
+    </main>
+</body>
+</html>
