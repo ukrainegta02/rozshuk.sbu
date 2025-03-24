@@ -1,0 +1,522 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c') no-repeat center center fixed;
+    background-size: cover;
+    color: #e0e0e0;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.tablet {
+    width: 90%;
+    max-width: 800px;
+    height: 90vh;
+    max-height: 600px;
+    background: #1a1a1a;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    position: relative;
+    overflow: hidden;
+    border: 2px solid #00b0ff;
+}
+
+.camera {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 20px;
+    background: #292929;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    z-index: 3;
+}
+
+.login-screen, .fingerprint-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), 
+                url('https://ukraine-gta.com.ua/images/pages/main/map.webp') no-repeat center center;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    transition: opacity 0.5s ease;
+}
+
+.login-screen.hidden, .fingerprint-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.login-screen img, .fingerprint-screen img {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+.login-screen h1, .fingerprint-screen h1 {
+    font-size: 1.5em;
+    color: #e0e0e0;
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+}
+
+.login-form input {
+    width: 200px;
+    padding: 8px;
+    margin: 10px 0;
+    border: 1px solid #00b0ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+}
+
+.login-form button {
+    padding: 10px 20px;
+    background: #00b0ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.login-form button:hover {
+    background: #0096db;
+}
+
+.fingerprint {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #00b0ff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.fingerprint:hover {
+    transform: scale(1.1);
+}
+
+.fingerprint i {
+    font-size: 2em;
+    color: #00b0ff;
+}
+
+.control-panel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    position: relative;
+}
+
+.control-panel.active {
+    opacity: 1;
+}
+
+.sidebar {
+    width: 25%;
+    background: #0d1a26;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    transition: width 0.3s ease;
+    position: relative;
+    overflow-y: auto;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .logo,
+.sidebar.collapsed a span {
+    display: none;
+}
+
+.sidebar.collapsed a {
+    justify-content: center;
+    padding: 10px;
+}
+
+.sidebar.collapsed a i {
+    margin-right: 0;
+}
+
+.toggle-sidebar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #00b0ff;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.toggle-sidebar:hover {
+    color: #00d4ff;
+}
+
+.toggle-sidebar.collapsed {
+    transform: rotate(180deg);
+}
+
+.sidebar .logo {
+    width: 50px;
+    margin-bottom: 20px;
+    transition: display 0.3s ease;
+}
+
+.sidebar a {
+    text-decoration: none;
+    color: #e0e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    font-size: 1em;
+    font-weight: 500;
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+    background: #00b0ff;
+    color: #fff;
+}
+
+.sidebar a.logout:hover {
+    background: #ff4444;
+    color: #fff;
+}
+
+.sidebar a i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.content-area {
+    width: 75%;
+    padding: 20px;
+    background: #1c2526;
+    overflow-y: auto;
+    transition: width 0.3s ease;
+}
+
+.content-area.expanded {
+    width: calc(100% - 60px);
+}
+
+.content {
+    display: none;
+}
+
+.content.active {
+    display: block;
+}
+
+.content h2 {
+    font-size: 1.5em;
+    color: #00b0ff;
+    margin-bottom: 20px;
+}
+
+/* Оновлені стилі для таблиці */
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    max-height: 400px; /* Обмежуємо висоту таблиці */
+    overflow-y: auto;
+    border-radius: 10px;
+}
+
+.wanted-table {
+    width: 100%;
+    min-width: 800px; /* Мінімальна ширина таблиці для горизонтального скролу */
+    border-collapse: collapse;
+    background: #0d1a26;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.wanted-table th, .wanted-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.9em;
+    white-space: nowrap; /* Запобігаємо переносу тексту */
+}
+
+.wanted-table th {
+    background: #00b0ff;
+    color: #fff;
+    text-transform: uppercase;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.wanted-table tr {
+    transition: background 0.3s ease;
+}
+
+.wanted-table tr:hover {
+    background: rgba(0, 176, 255, 0.1);
+}
+
+.wanted-table td a {
+    color: #00b0ff;
+    text-decoration: none;
+}
+
+.wanted-table td a:hover {
+    text-decoration: underline;
+}
+
+.wanted-table .status {
+    color: #00ff00;
+    font-weight: 500;
+}
+
+.wanted-table .status.rejected {
+    color: #ff4444;
+}
+
+.wanted-table .status-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.wanted-table .status-controls select {
+    padding: 5px;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #e0e0e0;
+    border: 1px solid #00b0ff;
+    font-size: 0.9em;
+}
+
+.wanted-table .status-controls button {
+    padding: 5px 10px;
+    background: #00b0ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.wanted-table .status-controls button:hover {
+    background: #0096db;
+}
+
+.wanted-table .status-controls .delete-btn {
+    background: #ff4444;
+}
+
+.wanted-table .status-controls .delete-btn:hover {
+    background: #cc3333;
+}
+
+/* Стилі для ползунків таблиці */
+.table-wrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #0d1a26;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #00b0ff;
+    border-radius: 4px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #00d4ff;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1em;
+    color: #00b0ff;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #00b0ff;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #e0e0e0;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #00d4ff;
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 5px rgba(0, 176, 255, 0.5);
+}
+
+.form-group select {
+    cursor: pointer;
+}
+
+.form-group select option {
+    background: #1a1a1a;
+    color: #e0e0e0;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #00b0ff, #00d4ff);
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    box-shadow: 0 2px 10px rgba(0, 176, 255, 0.3);
+}
+
+.btn:hover {
+    background: linear-gradient(45deg, #0096db, #00b0ff);
+    box-shadow: 0 5px 15px rgba(0, 176, 255, 0.5);
+}
+
+.btn i {
+    margin-right: 5px;
+}
+
+.add-wanted-form {
+    background: #0d1a26;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 176, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.add-wanted-form:hover {
+    transform: translateY(-5px);
+}
+
+.notification-list, .audit-list, .log-list {
+    list-style: none;
+    padding: 0;
+}
+
+.notification-list li, .audit-list li, .log-list li {
+    background: #0d1a26;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.notification-list li i, .audit-list li i, .log-list li i {
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+.notification-list li.green i { color: #00ff00; }
+.notification-list li.red i { color: #ff4444; }
+.notification-list li.yellow i { color: #ffa500; }
+
+.log-list li button {
+    background: #ff4444;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.log-list li button:hover {
+    background: #cc3333;
+}
+
+.articles-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.article-section {
+    background: #0d1a26;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 176, 255, 0.1);
+}
+
+.article-section h3 {
+    color: #00b0ff;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+    border-bottom: 1px solid rgba(0, 176, 255, 0.3);
+    padding-bottom: 5px;
+}
+
+.article-section p {
+    margin: 5px 0;
+    font-size: 0.9em;
+    color: #e0e0e0;
+}
+
+.article-section p strong {
+    color: #00d4ff;
+}
+
+/* Стилі для ползунка бічної панелі */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #0d1a26;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #00b0ff;
+    border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: #00d4ff;
+}

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управління СБУ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="tablet">
+        <div class="camera"></div>
+        <div class="fingerprint-screen">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="SBU Logo">
+            <h1>Служба безпеки України</h1>
+            <div class="fingerprint">
+                <i class="fas fa-fingerprint"></i>
+            </div>
+        </div>
+        <div class="login-screen hidden">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="SBU Logo">
+            <h1>Служба безпеки України</h1>
+            <form class="login-form" id="login-form">
+                <input type="text" id="login-username" placeholder="Логін" required>
+                <input type="password" id="login-password" placeholder="Пароль" required>
+                <input type="text" id="login-nickname" placeholder="Нікнейм" required>
+                <button type="submit"><i class="fas fa-sign-in-alt"></i> Увійти</button>
+            </form>
+        </div>
+        <div class="control-panel">
+            <div class="sidebar">
+                <button class="toggle-sidebar" id="toggle-sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/Security_Service_of_Ukraine_Emblem.svg" alt="SBU Logo" class="logo">
+                <a href="#" data-content="home" class="menu-item"><i class="fas fa-home"></i> <span>Головна</span></a>
+                <a href="#" data-content="wanted" class="menu-item"><i class="fas fa-search"></i> <span>Переглянути Розшук</span></a>
+                <a href="#" data-content="add-wanted" class="menu-item restricted" style="display: none;"><i class="fas fa-user-plus"></i> <span>Оголосити у Розшук</span></a>
+                <a href="#" data-content="articles" class="menu-item"><i class="fas fa-book"></i> <span>Список статей</span></a>
+                <a href="#" data-content="audit" class="menu-item restricted" style="display: none;"><i class="fas fa-users-cog"></i> <span>Кадровий аудит</span></a>
+                <a href="#" data-content="actions" class="menu-item restricted" style="display: none;"><i class="fas fa-history"></i> <span>Останні дії</span></a>
+                <a href="#" data-content="logs" class="menu-item restricted" id="logs-link" style="display: none;"><i class="fas fa-scroll"></i> <span>Логи системи</span></a>
+                <a href="#" data-content="login" class="menu-item" id="login-link"><i class="fas fa-sign-in-alt"></i> <span>Увійти в систему</span></a>
+                <a href="#" data-content="logout" class="menu-item logout restricted" style="display: none;"><i class="fas fa-sign-out-alt"></i> <span>Вийти</span></a>
+            </div>
+            <div class="content-area">
+                <div id="home" class="content">
+                    <h2><i class="fas fa-home"></i> Головна</h2>
+                    <p>Ласкаво просимо до панелі управління Служби безпеки України.</p>
+                    <p>Для доступу до всіх функцій увійдіть у систему.</p>
+                </div>
+                <div id="wanted" class="content">
+                    <h2><i class="fas fa-search"></i> Переглянути Розшук</h2>
+                    <div class="table-wrapper">
+                        <table class="wanted-table" id="wanted-table">
+                            <thead>
+                                <tr>
+                                    <th>Ім'я</th>
+                                    <th>ID</th>
+                                    <th>Стаття</th>
+                                    <th>Докази</th>
+                                    <th>Дата</th>
+                                    <th>Додано</th>
+                                    <th>Статус</th>
+                                    <th>Дії</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wanted-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="add-wanted" class="content">
+                    <h2><i class="fas fa-user-plus"></i> Оголосити у Розшук</h2>
+                    <form id="add-wanted-form" class="add-wanted-form">
+                        <div class="form-group">
+                            <label for="wanted-name"><i class="fas fa-user"></i> Ім'я та Прізвище:</label>
+                            <input type="text" id="wanted-name" required placeholder="Введіть ім'я та прізвище">
+                        </div>
+                        <div class="form-group">
+                            <label for="wanted-id"><i class="fas fa-id-card"></i> ID:</label>
+                            <input type="text" id="wanted-id" required placeholder="Введіть ID">
+                        </div>
+                        <div class="form-group">
+                            <label for="wanted-article"><i class="fas fa-gavel"></i> Стаття:</label>
+                            <select id="wanted-article" required>
+                                <option value="" disabled selected>Оберіть статтю</option>
+                                <option value="1.1">Стаття 1.1 Вбивство (30 хв.)</option>
+                                <option value="1.3">Стаття 1.3 Умисне заподіяння тяжкої шкоди здоров'ю (30 хв.)</option>
+                                <option value="1.6">Стаття 1.6 Перешкоджання наданню медичної допомоги (20 хв.)</option>
+                                <option value="4.2">Стаття 4.2 Грабіж (15 хв.)</option>
+                                <option value="4.3">Стаття 4.3 Напад на інкасацію (30 хв.)</option>
+                                <option value="4.6">Стаття 4.6 Умисне знищення або пошкодження майна (15 хв.)</option>
+                                <option value="4.7">Стаття 4.7 Крадіжка авто (20 хв.)</option>
+                                <option value="5.1">Стаття 5.1 Терористичний акт (30 хв.)</option>
+                                <option value="5.2">Стаття 5.2 Сприяння терористичній діяльності (20 хв.)</option>
+                                <option value="5.4">Стаття 5.4 Захоплення заручника (25 хв.)</option>
+                                <option value="5.6">Стаття 5.6 Бандитизм (15 хв.)</option>
+                                <option value="5.7">Стаття 5.7 Організації злочинної спільноти або участь у ній (25 хв.)</option>
+                                <option value="5.9">Стаття 5.9 Масові заворушення (15 хв.)</option>
+                                <option value="5.10">Стаття 5.10 Хуліганство (15 хв.)</option>
+                                <option value="5.11">Стаття 5.11 Вандалізм (15 хв.)</option>
+                                <option value="5.12">Стаття 5.12 Незаконне проникнення на об'єкт, що охороняється (30 хв.)</option>
+                                <option value="5.13">Стаття 5.13 Незаконне придбання/передача/виготовлення зброї (40 хв.)</option>
+                                <option value="5.14">Стаття 5.14 Незаконне використання/носіння зброї (40 хв.)</option>
+                                <option value="5.15">Стаття 5.15 Збройне насильство під час мітингу (50 хв.)</option>
+                                <option value="5.16">Стаття 5.16 Порушення правил порядку (20 хв.)</option>
+                                <option value="6.3">Стаття 6.3 Створення ДТП (20 хв.)</option>
+                                <option value="7.1">Стаття 7.1 Незаконний продаж/купівля/зберігання наркотиків (30 хв.)</option>
+                                <option value="7.2">Стаття 7.2 Незаконне вживання наркотичних засобів (30 хв.)</option>
+                                <option value="8.1">Стаття 8.1 Посягання на життя державного діяча (40 хв.)</option>
+                                <option value="8.2">Стаття 8.2 Збройний заколот (50 хв.)</option>
+                                <option value="8.3">Стаття 8.3 Публічні заклики до здійснення екстремістської діяльності (15 хв.)</option>
+                                <option value="8.7">Стаття 8.7 Одержання хабаря (60 хв.)</option>
+                                <option value="8.8">Стаття 8.8 Давання хабаря (40 хв.)</option>
+                                <option value="9.8">Стаття 9.8 Втеча від погоні (25 хв.)</option>
+                                <option value="9.9">Стаття 9.9 Несплата штрафів (30 хв.)</option>
+                                <option value="10.1">Стаття 10.1 Посягання на життя співробітника правоохоронного органу (40 хв.)</option>
+                                <option value="10.2">Стаття 10.2 Застосування насильства щодо представника влади (50 хв.)</option>
+                                <option value="10.3">Стаття 10.3 Образа представника державної організації (15 хв.)</option>
+                                <option value="10.4">Стаття 10.4 Провокація співробітника державної організації (10 хв.)</option>
+                                <option value="10.5">Стаття 10.5 Перешкода співробітникам правоохоронних органів (15 хв.)</option>
+                                <option value="10.7">Стаття 10.7 Перешкода транспортному засобу з проблисковими маячками (25 хв.)</option>
+                                <option value="10.8">Стаття 10.8 Здійснення нападу на колону (40 хв.)</option>
+                                <option value="10.9">Стаття 10.9 Непідкорення співробітнику правоохоронних органів (20 хв.)</option>
+                                <option value="10.10">Стаття 10.10 Непідкорення співробітнику правоохоронних органів під час НС (40 хв.)</option>
+                                <option value="10.11">Стаття 10.11 Втеча під час затримання (40 хв.)</option>
+                                <option value="11.8">Стаття 11.8 Уникнення призову (50 хв.)</option>
+                                <option value="12.1">Стаття 12.1 Порушення правил перетину Блокпоста (25 хв.)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="wanted-evidence"><i class="fas fa-video"></i> Докази порушення (YouTube):</label>
+                            <input type="url" id="wanted-evidence" required placeholder="Введіть посилання на YouTube">
+                        </div>
+                        <button type="submit" class="btn"><i class="fas fa-plus"></i> Оголосити</button>
+                    </form>
+                </div>
+                <div id="articles" class="content">
+                    <h2><i class="fas fa-book"></i> Список статей</h2>
+                    <div class="articles-list">
+                        <div class="article-section">
+                            <h3>Розділ 1: Злочини проти життя та здоров'я</h3>
+                            <p><strong>Стаття 1.1:</strong> Вбивство (30 хв.)</p>
+                            <p><strong>Стаття 1.3:</strong> Умисне заподіяння тяжкої шкоди здоров'ю (30 хв.)</p>
+                            <p><strong>Стаття 1.6:</strong> Перешкоджання наданню медичної допомоги (20 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 4: Злочини проти власності</h3>
+                            <p><strong>Стаття 4.2:</strong> Грабіж (15 хв.)</p>
+                            <p><strong>Стаття 4.3:</strong> Напад на інкасацію (30 хв.)</p>
+                            <p><strong>Стаття 4.6:</strong> Умисне знищення або пошкодження майна (15 хв.)</p>
+                            <p><strong>Стаття 4.7:</strong> Крадіжка авто (20 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 5: Злочини проти громадської безпеки</h3>
+                            <p><strong>Стаття 5.1:</strong> Терористичний акт (30 хв.)</p>
+                            <p><strong>Стаття 5.2:</strong> Сприяння терористичній діяльності (20 хв.)</p>
+                            <p><strong>Стаття 5.4:</strong> Захоплення заручника (25 хв.)</p>
+                            <p><strong>Стаття 5.6:</strong> Бандитизм (15 хв.)</p>
+                            <p><strong>Стаття 5.7:</strong> Організації злочинної спільноти або участь у ній (25 хв.)</p>
+                            <p><strong>Стаття 5.9:</strong> Масові заворушення (15 хв.)</p>
+                            <p><strong>Стаття 5.10:</strong> Хуліганство (15 хв.)</p>
+                            <p><strong>Стаття 5.11:</strong> Вандалізм (15 хв.)</p>
+                            <p><strong>Стаття 5.12:</strong> Незаконне проникнення на об'єкт, що охороняється (30 хв.)</p>
+                            <p><strong>Стаття 5.13:</strong> Незаконне придбання/передача/виготовлення зброї (40 хв.)</p>
+                            <p><strong>Стаття 5.14:</strong> Незаконне використання/носіння зброї (40 хв.)</p>
+                            <p><strong>Стаття 5.15:</strong> Збройне насильство під час мітингу (50 хв.)</p>
+                            <p><strong>Стаття 5.16:</strong> Порушення правил порядку (20 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 6: Злочини у сфері транспорту</h3>
+                            <p><strong>Стаття 6.3:</strong> Створення ДТП (20 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 7: Злочини, пов'язані з наркотиками</h3>
+                            <p><strong>Стаття 7.1:</strong> Незаконний продаж/купівля/зберігання наркотиків (30 хв.)</p>
+                            <p><strong>Стаття 7.2:</strong> Незаконне вживання наркотичних засобів (30 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 8: Злочини проти держави</h3>
+                            <p><strong>Стаття 8.1:</strong> Посягання на життя державного діяча (40 хв.)</p>
+                            <p><strong>Стаття 8.2:</strong> Збройний заколот (50 хв.)</p>
+                            <p><strong>Стаття 8.3:</strong> Публічні заклики до здійснення екстремістської діяльності (15 хв.)</p>
+                            <p><strong>Стаття 8.7:</strong> Одержання хабаря (60 хв.)</p>
+                            <p><strong>Стаття 8.8:</strong> Давання хабаря (40 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 9: Інші правопорушення</h3>
+                            <p><strong>Стаття 9.8:</strong> Втеча від погоні (25 хв.)</p>
+                            <p><strong>Стаття 9.9:</strong> Несплата штрафів (30 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 10: Злочини проти правоохоронних органів</h3>
+                            <p><strong>Стаття 10.1:</strong> Посягання на життя співробітника правоохоронного органу (40 хв.)</p>
+                            <p><strong>Стаття 10.2:</strong> Застосування насильства щодо представника влади (50 хв.)</p>
+                            <p><strong>Стаття 10.3:</strong> Образа представника державної організації (15 хв.)</p>
+                            <p><strong>Стаття 10.4:</strong> Провокація співробітника державної організації (10 хв.)</p>
+                            <p><strong>Стаття 10.5:</strong> Перешкода співробітникам правоохоронних органів (15 хв.)</p>
+                            <p><strong>Стаття 10.7:</strong> Перешкода транспортному засобу з проблисковими маячками (25 хв.)</p>
+                            <p><strong>Стаття 10.8:</strong> Здійснення нападу на колону (40 хв.)</p>
+                            <p><strong>Стаття 10.9:</strong> Непідкорення співробітнику правоохоронних органів (20 хв.)</p>
+                            <p><strong>Стаття 10.10:</strong> Непідкорення співробітнику правоохоронних органів під час НС (40 хв.)</p>
+                            <p><strong>Стаття 10.11:</strong> Втеча під час затримання (40 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 11: Військові злочини</h3>
+                            <p><strong>Стаття 11.8:</strong> Уникнення призову (50 хв.)</p>
+                        </div>
+                        <div class="article-section">
+                            <h3>Розділ 12: Порушення на блокпостах</h3>
+                            <p><strong>Стаття 12.1:</strong> Порушення правил перетину Блокпоста (25 хв.)</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="audit" class="content">
+                    <h2><i class="fas fa-users-cog"></i> Кадровий аудит</h2>
+                    <ul class="audit-list" id="audit-list"></ul>
+                </div>
+                <div id="actions" class="content">
+                    <h2><i class="fas fa-history"></i> Останні дії</h2>
+                    <ul class="notification-list" id="actions-list"></ul>
+                </div>
+                <div id="logs" class="content">
+                    <h2><i class="fas fa-scroll"></i> Логи системи</h2>
+                    <ul class="log-list" id="log-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
